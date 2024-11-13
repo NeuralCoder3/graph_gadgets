@@ -1,0 +1,25 @@
+Adding constraints for 0-1 and 2-3
+Adding constraints for 0-1 and 4-5
+Adding constraints for 2-3 and 4-5
+Adding negative constraints for 0-1
+Adding negative constraints for 2-3
+Adding negative constraints for 4-5
+Solving...
+Solution 1 after 719.81 seconds
+Solution 2 after 601.94 seconds
+Solution 3 after 97.84 seconds
+Solution 4 after 3.93 seconds
+Solution 5 after 4.95 seconds
+Solution 6 after 3.99 seconds
+Solution 7 after 3.71 seconds
+Solution 8 after 3.85 seconds
+Solution 9 after 4.10 seconds
+Solution 10 after 3.22 seconds
+Solution 11 after 3.47 seconds
+Solution 12 after 4.50 seconds
+Solution 13 after 55.00 seconds
+Solution 14 after 3.32 seconds
+Solution 15 after 248.24 seconds
+Solution 16 after 3.63 seconds
+Solution 17 after 3.34 seconds
+Solution 18 after 3.62 seconds

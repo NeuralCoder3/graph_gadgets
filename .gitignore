@@ -1,0 +1,7 @@
+*.smt2
+*_tmp.*
+*.png
+venv
+__pycache__
+graphs*
+gadget_graphs
