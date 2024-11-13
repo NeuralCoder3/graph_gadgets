@@ -152,12 +152,12 @@ with open(f"graph_k{k}_n{n}_c{c}.smt2", "w") as f:
         
 count = 0
 outfolder = f"graphs_k{k}_n{n}_c{c}"
-accept_outfolder = f"gadget_graphs"
 if not os.path.exists(outfolder):
     os.makedirs(outfolder)
-if not os.path.exists(accept_outfolder):
-    os.makedirs(accept_outfolder)
+print()
 print("Solving...")
+print(f"n={n} Nodes, c={c} Antennas, k={k} Regular")
+print(f"Writing solutions to {outfolder}")
 while True:
     t0 = time.time()
     res = s.check()
