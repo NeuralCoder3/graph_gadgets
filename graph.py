@@ -5,23 +5,9 @@ import functools
 
 s = Solver()
 
-# n = 20
-# n = 6
-# k = 3
-# c = 4 # antenna
-
-# minimal example
-# n = 10
-# k = 3
-# c = 6 # antenna
-
-# julian: 30 found, 3 antennen paare
-# jede isomorphie klasse => teste alle automorphismen => antennen paare
-
 k = 3
 n = 30
-# c = 6 # antenna
-c = 8 # antenna
+c = 6 # antenna
 
 # w.l.o.g. 1 .. c are attachment points and 0,1 2,3 ... are paired
 assert c % 2 == 0
@@ -72,6 +58,15 @@ def is_isomorph(adj, swaps, name):
         if a not in swap_nodes:
             constr.append( perm[a][a] )
     
+    # Perm x A x Perm
+    # intuitively: 
+    # A' = Perm x A 
+    # if i permuted to l (perm) and l connected to j (adj) 
+    # then l connected to j in intermediate matrix
+    # A'' = A' x Perm
+    # if i connected to l in intermediate matrix and l permuted to j
+    # then i connected to j in final matrix
+    
     adj_matr = []
     for i in range(n):
         row = []
@@ -79,7 +74,6 @@ def is_isomorph(adj, swaps, name):
             row.append(
                 Or(
                     [
-                    # And(adj[i][l], perm[l][j])
                     And(perm[i][l], adj[l][j])
                     for l in range(n)]
                 )
@@ -94,89 +88,27 @@ def is_isomorph(adj, swaps, name):
                 Or(
                     [
                     And(adj_matr[i][l], perm[l][j])
-                    # And(perm[i][l], adj[l][j])
                     for l in range(n)]
                 )
             )
         adj_matr2.append( row )
     
-    # return And([ adj_matr[i][j] == adj[i][j] for i in range(n) for j in range(n) ])
-    # perm under exists
     constr.append( And([ adj_matr2[i][j] == adj[i][j] for i in range(n) for j in range(n) ]))
-    # return And(constr)
+    # return And(constr) # if just positive search is needed
     return Exists(flatten(perm), And(constr))
 
     
 pairs = [ (i, i+1) for i in range(0, c, 2) ]
 for pi1, p1 in enumerate(pairs):
     for pi2, p2 in enumerate(pairs):
-        # if p1 == p2:
-        #     continue
         if pi2 <= pi1:
             continue
-        # if pi2 > 1:
-        #     continue
         px, py = p1
         i2, j2 = p2
         p1_str = f"{px}-{py}"
         p2_str = f"{i2}-{j2}"
         print(f"Adding constraints for {p1_str} and {p2_str}")
-        # s.add( is_isomorph(x, [(px, py), (i2, j2)], f"{p1_str}_{p2_str}") )
         s.add( is_isomorph(x, [p1,p2], f"{p1_str}_{p2_str}") )
-        
-        
-        # permutation matrix (n*n) with row and column sums = 1
-        # perm = [ [ Bool("p(%s,%s)_%s_%s" % (p1_str, p2_str, i+1, j+1)) for j in range(n) ] for i in range(n) ]
-        # for i in range(n):
-        #     s.add( Sum([ If(perm[i][j], 1, 0) for j in range(n) ]) == 1 )
-        #     s.add( Sum([ If(perm[j][i], 1, 0) for j in range(n) ]) == 1 )
-        # # pre determined permutations
-        # # s.add( perm[0][1] )
-        # # s.add( perm[1][0] )
-        # # s.add( perm[2][3] )
-        # # s.add( perm[3][2] )
-        # s.add( perm[px][py] )
-        # s.add( perm[py][px] )
-        # s.add( perm[i2][j2] )
-        # s.add( perm[j2][i2] )
-        # # other antenna not swapped
-        # for a in range(c):
-        #     if a != px and a != py and a != i2 and a != j2:
-        #         s.add( perm[a][a] )
-        #     # if a != 0 and a != 1 and a != 2 and a != 3:
-        #     #     s.add( perm[a][a] )
-        # # adjacency matrix (x) * perm = new_adjacency_matrix
-        # adj_matr = []
-        # for i in range(n):
-        #     row = []
-        #     for j in range(n):
-        #         row.append(
-        #             Or(
-        #                 [
-        #                 And(x[i][l], perm[l][j])
-        #                 # And(perm[i][l], x[l][j])
-        #                 for l in range(n)]
-        #             )
-        #         )
-        #         # row.append( Or( And(x[i][j], perm[i][j]), And(Not(x[i][j]), Not(perm[i][j])) )
-        #     adj_matr.append( row )
-        
-        # # isomorphic if the adjacency matrix is the same
-        # for i in range(n):
-        #     for j in range(n):
-        #         s.add( adj_matr[i][j] == x[i][j] )
-            
-        
-        
-        
-        # applying the swaps in p1,p2 the graph is isomorphic
-        # to the original graph (only permutation on the inner nodes (not antenna))
-        # perm = [ [ Bool("p(%s,%s)_%s_%s" % (p1_str, p2_str, i+1, j+1)) for j in range(n) ] for i in range(n) ]
-        # # each node connected iff the permuted nodes are connected
-        # for i in range(n):
-        #     for j in range(n):
-        #         s.add( perm[i][j] == x[i][j] )
-        # antenna i connected to node i
         
         
 for px,py in pairs:
@@ -242,16 +174,3 @@ while True:
     s.add( Or([ x[i][j] != r[i][j] for i in range(n) for j in range(n) ]) )
     
     renderGraph(r, f"{outfolder}/{count}")
-    
-    # valid = True
-    # for p in pairs:
-    #     px, py = p
-    #     # check that after swapping px,py the graphs are not isomorphic
-    #     ps = Solver()
-    #     ps.add(is_isomorph(r, [(px, py)], f"{px}-{py}") )
-    #     if ps.check() == sat:
-    #         valid = False
-    #         break
-    # if valid:
-    #     renderGraph(r, f"{accept_outfolder}/graph_{n}_{k}_{count}")
-    #     print(f"  Valid solution: {count}")
